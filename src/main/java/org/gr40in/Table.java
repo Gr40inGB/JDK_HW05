@@ -1,6 +1,7 @@
 package org.gr40in;
 
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,17 @@ import java.util.List;
 public class Table {
 
     private final static List<String> allNames = new ArrayList<>(Arrays.asList(
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
+            "Aristotle",
             "Aristotle",
             "Plato",
             "Socrates",
@@ -21,17 +33,28 @@ public class Table {
     private static List<Fork> forks = new ArrayList<>(countTableSize);
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
         forks = prepareTable(countTableSize);
         philosophers = invitePhilosophersToTheTable(countTableSize);
         System.out.println(philosophers);
 
+        PrintStream backUp = System.out;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PrintStream catchStream = new PrintStream(backUp);
+        System.setOut(catchStream);
+
+        philosophers.forEach(Thread::start);
+        for (Philosopher philosopher : philosophers) {
+            philosopher.join();
+        }
+        System.setOut(backUp);
+        System.out.println(byteArrayOutputStream.toString());
     }
 
     private static List<Fork> prepareTable(int countTableSize) {
         List<Fork> tempLink = new ArrayList<>(countTableSize);
         for (int i = 0; i < countTableSize; i++) {
-
+            tempLink.add(new Fork(i));
         }
         return tempLink;
     }
@@ -39,56 +62,8 @@ public class Table {
     public static List<Philosopher> invitePhilosophersToTheTable(int count) {
         List<Philosopher> tempLink = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            tempLink.add(new Philosopher(i, allNames.get(i)));
+            tempLink.add(new Philosopher(i, allNames.get(i), forks.get(i), forks.get((i+1)%count)));
         }
         return tempLink;
-    }
-
-    public static class Philosopher implements Runnable {
-        private String name;
-        int placeOnTable;
-
-        @Override
-        public String toString() {
-            return placeOnTable + 1 + ". " + name;
-        }
-
-        public Philosopher(int placeOnTable, String name) {
-            this.placeOnTable = placeOnTable;
-            this.name = name;
-        }
-
-        @Override
-        public void run() {
-
-        }
-
-        public void eat() throws InterruptedException {
-            if (canEat(this)) {
-                Thread.sleep((long) Math.random() * 10000);
-            }
-        }
-
-
-    }
-
-    private static boolean canEat(Philosopher philosopher) {
-
-    }
-
-
-    private static class Fork {
-        int numberOnTable;
-        boolean used;
-
-        public Fork(int numberOnTable) {
-            this.numberOnTable = numberOnTable;
-            this.used = false;
-        }
-
-        @Override
-        public String toString() {
-            return "Fork" + numberOnTable + " " + used;
-        }
     }
 }
