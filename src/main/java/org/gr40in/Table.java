@@ -10,17 +10,6 @@ public class Table {
 
     private final static List<String> allNames = new ArrayList<>(Arrays.asList(
             "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
-            "Aristotle",
             "Plato",
             "Socrates",
             "Confucius",

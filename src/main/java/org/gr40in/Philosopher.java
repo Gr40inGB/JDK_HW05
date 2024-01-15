@@ -51,7 +51,7 @@ public class Philosopher extends Thread {
     private void think() {
         System.out.println(toString() + "\t  start thinking " + needToEatCount + " " + LocalDateTime.now());
         try {
-            Thread.sleep(300);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
