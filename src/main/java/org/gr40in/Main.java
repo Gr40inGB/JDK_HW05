@@ -37,52 +37,40 @@ public class Main {
         byNumbers.add(stateList.stream().filter(x -> x.number.equals("3")).sorted().toList());
         byNumbers.add(stateList.stream().filter(x -> x.number.equals("4")).sorted().toList());
         byNumbers.add(stateList.stream().filter(x -> x.number.equals("5")).sorted().toList());
-        for (int d = 0; d < byNumbers.size(); d++) {
-            System.out.println(byNumbers.get(d));
+                for (int d = 1; d < dinner.size() + 1; d++) {
             LocalDateTime momentOfDinner = start;
-            Doing doing = Doing.waiting;
-            for (State s : byNumbers.get(d)) {
-                int before = (int) Math.abs(Duration.between(s.time, momentOfDinner).toNanos()) / scale;
-                for (int i = 0; i < before; i++) {
-                    dinner.get(d).append(doing == Doing.eating ? "+" : doing == Doing.thinking ? "." : "_");
+            Action doing = Action.WAITING;
+            for (State s : stateList) {
+                if (s.number.equals(String.valueOf(d))) {
+                    int before = (int) Duration.between(momentOfDinner, s.time).getNano()/scale;
+
+                    for (int i = 0; i < before; i++) {
+                        dinner.get(d - 1).append(doing == Action.EATING ? "+" : doing == Action.THINKING ? "." : "_");
+                    }
+                    if (s.start) doing = s.action;
+                    else doing = Action.WAITING;
+                    momentOfDinner = s.time;
+
                 }
-                if (s.start) doing = s.doing;
-                else doing = Doing.waiting;
-                momentOfDinner = s.time;
             }
         }
+//        for (int d = 0; d < byNumbers.size(); d++) {
+//            System.out.println(byNumbers.get(d));
+//            LocalDateTime momentOfDinner = start;
+//            Action doing = Action.WAITING;
+//            for (State s : byNumbers.get(d)) {
+//                int before = (int) Math.abs(Duration.between(s.time, momentOfDinner).toNanos()) / scale;
+//                for (int i = 0; i < before; i++) {
+//                    dinner.get(d).append(doing == Action.EATING ? "+" : doing == Action.THINKING ? "." : "_");
+//                }
+//                if (s.start) doing = s.action;
+//                else doing = Action.WAITING;
+//                momentOfDinner = s.time;
+//            }
+//        }
 
         dinner.forEach(System.out::println);
     }
 
-    static class State implements Comparable<State> {
-        String number;
-        boolean start;
-        Doing doing;
-
-        @Override
-        public String toString() {
-            return "State{" + "number='" + number + '\'' + ", start=" + start + ", doing=" + doing + ", time=" + time + '}';
-        }
-
-        LocalDateTime time;
-
-        public State(String data) {
-            number = data.substring(0, 1);
-            String[] arr = data.split("\\t")[1].trim().split("\\s+");
-            start = arr[0].trim().equals("start");
-            doing = arr[1].trim().equals("eating") ? Doing.eating : Doing.thinking;
-            time = LocalDateTime.parse(arr[3]);
-        }
-
-        @Override
-        public int compareTo(State o) {
-            return time.compareTo(o.time);
-        }
-    }
-
-    enum Doing {
-        waiting, eating, thinking
-    }
 
 }
